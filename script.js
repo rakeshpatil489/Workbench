@@ -34,33 +34,6 @@ var KW_MASTER=[['HA-44101','Sensor harness, 8-pin','8544.30.00','S. Yilmaz','Mar
 
 var ITEMS=[
 {
-  id:'HA-44120',group:'fact',name:'Engine sensor harness, 12-pin',supplier:'Kabelwerk Nord GmbH',due:'22 Sep',dueFor:'Q4 shipment',importSrc:'SAP, batch 0916',
-  shared:HARNESS_PATH,
-  split:'Both codes agree down to heading 8544. One fact settles the subheading.',
-  cands:[
-    {code:'8544.30.00',title:'Wiring sets of a kind used in vehicles, aircraft or ships',conf:71,after:97,answer:'yes'},
-    {code:'8544.42.90',title:'Other conductors for up to 1,000 V, fitted with connectors',conf:24,after:95,answer:'no'}
-  ],
-  q:{
-    text:'Is this harness designed for use in motor vehicles?',
-    why:'Subheading 8544 30 takes priority for wiring sets of a kind used in vehicles. Nothing in the product data says where this harness is installed.',
-    clues:['The SAP name says "engine sensor"','No vehicle model or OEM part number is recorded','The supplier is filed under automotive in SAP'],
-    yes:'Yes, it is built for vehicles',no:'No, it has another use',
-    factKey:'Intended use',yesVal:'Motor vehicles, engine compartment',noVal:'Not for vehicles',
-    owner:{name:'Jana Weber',first:'Jana',role:'Product data, Automotive',initials:'JW'},
-    ask:'Is HA-44120 (Engine sensor harness, 12-pin) designed for use in motor vehicles? If yes, which vehicle or OEM part number does it belong to?'
-  },
-  facts:[['Description','12-pin harness for connecting sensor modules, 0.6 m, PVC sheath','SAP'],['Rated voltage','60 V','Supplier datasheet'],['Connectors','Fitted at both ends','image'],['Intended use',null,null]],
-  understanding:{product:'Insulated 12-pin wiring harness, 0.6 m, PVC sheath, connectors fitted at both ends, rated 60 V.',use:'Connecting sensor modules. The installation context is not stated.',note:'The description leaves one essential question open: whether the harness is made for vehicles.'},
-  reasoning:[
-    {rule:'GRI 1',law:'Classification follows the wording of the headings and of the section and chapter notes.',note:'Heading 8544 fits without doubt: an insulated conductor set fitted with connectors.',refs:['Notes to chapter 85','Heading 8544']},
-    {rule:'GRI 6',law:'Subheadings are compared only with subheadings at the same level, by their own wording and notes.',note:'8544 30 and 8544 42 compete at the same level. 8544 30 applies only if the set is of a kind used in vehicles, aircraft or ships.',refs:['Subheading 8544 30','BTI sample: engine compartment wiring set']}
-  ],
-  why:'The law is clear here. The confidence is low because the deciding fact is missing from the product data.',
-  master:KW_MASTER,
-  change:'If the harness is built for vehicles, 8544.30.00 rises to 97%. If it is not, 8544.42.90 rises to 95%.'
-},
-{
   id:'KT-7501',group:'fact',name:'Insulated bottle, 750 ml, stainless steel',supplier:'Hanse Outdoor',due:'24 Sep',dueFor:'autumn launch',importSrc:'PIM export',
   shared:[],
   split:'The two codes sit in different sections. One fact decides which one this product belongs to.',
@@ -110,28 +83,6 @@ var ITEMS=[
   change:'No missing fact would settle this. It comes down to which function you judge to be principal.'
 },
 {
-  id:'AU-5530',group:'judgment',name:'Bluetooth speaker with FM radio',supplier:'Klangwerk Audio',due:'30 Sep',dueFor:'holiday range',importSrc:'Excel upload',
-  shared:[['Section XVI','Machinery and electrical equipment'],['Chapter 85','Electrical machinery and equipment']],
-  split:'Both codes sit in chapter 85. They split at heading level, on which function is principal.',
-  cands:[
-    {code:'8518.22.00',title:'Multiple loudspeakers mounted in the same enclosure',conf:58},
-    {code:'8527.19.00',title:'Other radio receivers that run without an external power source',conf:37}
-  ],
-  judge:{frame:'A machine with several functions is classified by its principal function. Which is it here: loudspeaker or radio?',cases:[
-    ['Two drivers and a passive radiator in one enclosure','Marketed for streaming music from a phone','Radio is listed fourth among the features'],
-    ['Built-in FM tuner and antenna','Plays audio with no phone connected','Battery-powered, like a portable radio']
-  ]},
-  facts:[['Audio','2 drivers, 1 passive radiator, 20 W','Supplier datasheet'],['Inputs','Bluetooth 5.3, FM tuner, USB-C','PIM'],['Power','Built-in battery, 12 hours','PIM'],['Packaging claim','"Your music, everywhere"','image']],
-  understanding:{product:'Portable speaker with two drivers, a passive radiator, Bluetooth 5.3, an FM tuner and a 12-hour battery.',use:'Playing music from a phone or from FM radio.',note:'The description is detailed and leaves no essential questions open.'},
-  reasoning:[
-    {rule:'GRI 1',law:'Classification follows the wording of the headings and of the section and chapter notes.',note:'Heading 8518 and heading 8527 each cover one of the product\u2019s functions.',refs:['Heading 8518','Heading 8527']},
-    {rule:'Section XVI, note 3',law:'Machines that perform two or more complementary or alternative functions are classified by their principal function.',note:'Marketing and hardware point to the loudspeaker. The standalone radio function keeps 8527 in play.',refs:['Notes to section XVI']}
-  ],
-  why:'The product data is complete. The confidence is low because two headings each cover a real function.',
-  master:[['AU-5410','Portable speaker, 10 W','8518.22.00','M. Koch','Nov 2025']],
-  change:'No missing fact would settle this. It comes down to whether the speaker or the radio is the principal function.'
-},
-{
   id:'HA-44135',group:'conflict',name:'Control cabinet harness, 8-pin',supplier:'Kabelwerk Nord GmbH',due:'2 Oct',dueFor:'plant order',importSrc:'SAP, batch 0916',
   shared:HARNESS_PATH,
   split:'Both codes agree down to heading 8544. Alice and your master data disagree on the subheading.',
@@ -153,29 +104,43 @@ var ITEMS=[
 ];
 
 var GROUPS={
-  fact:{label:'Missing a fact',hint:'The code depends on a fact the product data doesn\u2019t state. Get the fact, and the code follows.',total:11},
-  judgment:{label:'Needs judgment',hint:'The facts are known, but the tariff can be read two ways. You make the call.',total:9},
-  conflict:{label:'Differs from master data',hint:'Alice disagrees with how similar products were coded before. One of the two is wrong.',total:5}
+  fact:{label:'Missing information',hint:'The code depends on a fact the product data doesn\u2019t state. Get the fact, and the code follows.',total:11},
+  judgment:{label:'Needs experts judgment',hint:'The facts are known, but the tariff can be read two ways. You make the call.',total:9},
+  conflict:{label:'Master-Data conflict',hint:'Alice disagrees with how similar products were coded before. One of the two is wrong.',total:5}
 };
 var REASONS=['The product data was wrong or incomplete','Alice misread the product','My legal reading differs','A binding ruling applies','Other, noted in the documentation'];
 var SIGNER='Dr. Miriam Brandt';
 var QQ=[['why','Why isn\u2019t this above 90%?'],['change','What would change the answer?'],['similar','How did we classify similar products?']];
 
 var NOTES=[
-  {t:'Group by cause, not by score',b:'A 71% score says how unsure Alice is, not why. A missing product fact, a legal judgment call and a clash with master data each need a different action, so the queue tabs are organised around the action.',view:'list'},
-  {t:'Sort by deadline',b:'Reviewers work against shipments and launches. The queue is sorted by when each product is needed, so it answers "what blocks revenue first" rather than "what scored lowest".',view:'list'},
-  {t:'Fits the product that exists',b:'The queue sits next to Projects and reuses traide\u2019s list, stepper and decision basis panel with Alice. The surface area is small, which makes it cheap to ship and easy to learn.'},
-  {t:'Say why before asking what',b:'The banner tells the reviewer what kind of work this is before they read anything else: find a fact, make a call, or settle a conflict.',view:'detail'},
-  {t:'Show only where the codes disagree',b:'The path both codes share is settled, so it collapses into a quiet tree. The reviewer checks one fork, marked by the diamond, instead of re-deriving a whole classification.',view:'detail'},
-  {t:'Make the routing rule visible',b:'The 90% marker on every bar explains why the item is in the queue and what a confident suggestion looks like. When the rule is legible, trust can be calibrated instead of assumed.',view:'detail'},
-  {t:'Turn research into one question',b:'For data gaps, Alice names the single fact that decides the code and the clues she found. Answering updates the tree, the confidence and the tariff field at once, so the reviewer sees the consequence before approving.',view:'detail',g:'fact'},
-  {t:'"Not sure" routes instead of guessing',b:'The person who knows the product is rarely on the customs team. One click sends a structured question they can answer from email without a login, and the item leaves the queue until it returns.',view:'detail',g:'fact'},
-  {t:'Every fact shows where it came from',b:'Facts from SAP, the PIM or a datasheet read as solid. Facts Alice read from an image stay visually weaker until a person confirms them, so the documentation shows which inputs a human vouched for.',view:'detail'},
-  {t:'No default on judgment calls',b:'When the law can be read two ways, Alice\u2019s lean is shown as an argument, not a preselected answer. That friction is deliberate: it counters automation bias on exactly the decisions the reviewer signs.',view:'detail',g:'judgment'},
-  {t:'Open the basis where the evidence is',b:'For conflicts, the decision basis opens on master data instead of Alice, and shows which past products are affected. The reviewer can flag them for re-review without changing anything live in SAP.',view:'detail',g:'conflict'},
-  {t:'Documentation is written while you work',b:'The decision bar states what will be recorded before you approve. Approving moves the stepper to Documentation and hands over to a senior reviewer, which keeps the four-eyes principle intact.',view:'detail'},
-  {t:'Overrides need a reason',b:'A structured reason turns every override into feedback for Alice and a defensible audit entry. Free text alone gets skipped under time pressure.',view:'detail',override:true},
-  {t:'What I would measure',b:'Primary: median review time per queue item. Guardrail: corrections at sign-off and after release, so speed never costs accuracy. Also: the share of items routed to data owners and override reasons by category. In production, pace belongs in a team view, not as pressure on individuals.',view:'list'}
+  {t:'Group by cause, not by score',b:'A 71% score says how unsure Alice is, not why. A missing product fact, a legal judgment call and a clash with master data each need a different action, so the queue tabs are organised around the action.',view:'list',
+    a:'I\u2019m assuming Alice\u2019s model can actually label why its confidence is low, not just emit a score. I haven\u2019t seen that output, so this is the one signal the whole concept leans on. If it exists, grouping by it turns one number into three different playbooks instead of one queue everyone reads the same way.'},
+  {t:'Sort by deadline',b:'Reviewers work against shipments and launches. The queue is sorted by when each product is needed, so it answers "what blocks revenue first" rather than "what scored lowest".',view:'list',
+    a:'I\u2019m assuming a trustworthy need-by date is already attached to each product; the dates here are sample values, not data from a live shipment plan. If real deadlines are that reliable, sorting by them tells a reviewer what\u2019s urgent without them having to reconstruct it from context.'},
+  {t:'Fits the product that exists',b:'The queue sits next to Projects and reuses traide\u2019s list, stepper and decision basis panel with Alice. The surface area is small, which makes it cheap to ship and easy to learn.',
+    a:'I\u2019m assuming traide already has a list view, a stepper and a decision-basis-with-Alice panel that this queue can slot into, based on what I could see from outside, not the live design system. If that\u2019s accurate, this ships as a thin layer over existing pieces instead of a new app to learn and maintain.'},
+  {t:'Say why before asking what',b:'The banner tells the reviewer what kind of work this is before they read anything else: find a fact, make a call, or settle a conflict.',view:'detail',
+    a:'This depends on the same cause label from note 1 being reliable enough to lead with, before the reviewer has read any product detail. If it is, naming the type of work up front saves the reviewer from diagnosing the cause themselves on every single item.'},
+  {t:'Show only where the codes disagree',b:'The path both codes share is settled, so it collapses into a quiet tree. The reviewer checks one fork, marked by the diamond, instead of re-deriving a whole classification.',view:'detail',
+    a:'I\u2019m assuming Alice\u2019s reasoning can be output as structured steps, not just a final code, so the shared part of the path can be told apart from the fork. I haven\u2019t seen that intermediate trace. If it exists, collapsing the agreed part lets the reviewer look at exactly the one thing that matters instead of re-deriving the whole classification.'},
+  {t:'Make the routing rule visible',b:'The 90% marker on every bar explains why the item is in the queue and what a confident suggestion looks like. When the rule is legible, trust can be calibrated instead of assumed.',view:'detail',
+    a:'I\u2019m assuming 90% is close to traide\u2019s real release threshold; I picked it as a plausible sample value, not a confirmed number. Whatever the real figure is, showing it on every bar turns the queue\u2019s reason for existing into something the reviewer can see, rather than a rule they take on faith.'},
+  {t:'Turn research into one question',b:'For data gaps, Alice names the single fact that decides the code and the clues she found. Answering updates the tree, the confidence and the tariff field at once, so the reviewer sees the consequence before approving.',view:'detail',g:'fact',
+    a:'I\u2019m assuming Alice can isolate the one fact that would flip the decision and recompute a real confidence once it\u2019s supplied. I don\u2019t know if every gap reduces this cleanly, or if some need several facts at once. Where it does, turning research into one question replaces a lookup task with a single click.'},
+  {t:'"Not sure" routes instead of guessing',b:'The person who knows the product is rarely on the customs team. One click sends a structured question they can answer from email without a login, and the item leaves the queue until it returns.',view:'detail',g:'fact',
+    a:'I\u2019m assuming there\u2019s a reliable way to know who owns a given product fact, and that they can be reached and answer outside a traide login. I don\u2019t have visibility into traide\u2019s org data or whether this handoff exists today. If that mapping holds, it heads off the common failure of guessing rather than asking under time pressure.'},
+  {t:'Every fact shows where it came from',b:'Facts from SAP, the PIM or a datasheet read as solid. Facts Alice read from an image stay visually weaker until a person confirms them, so the documentation shows which inputs a human vouched for.',view:'detail',
+    a:'I\u2019m assuming the import pipeline tags each fact with its source system, and separately flags which facts Alice read from an image rather than one a system recorded directly. I haven\u2019t seen this provenance data; the sources here are invented for the sample. If sources really are tagged, this lets a reviewer trust facts differently instead of treating every field as equally solid.'},
+  {t:'No default on judgment calls',b:'When the law can be read two ways, Alice\u2019s lean is shown as an argument, not a preselected answer. That friction is deliberate: it counters automation bias on exactly the decisions the reviewer signs.',view:'detail',g:'judgment',
+    a:'I\u2019m assuming reviewers are prone to defaulting to whatever\u2019s preselected under time pressure, based on general findings on AI-assisted decisions, not data on this team\u2019s behavior. If that bias is real here, leaving the choice unmade forces an active decision on exactly the call the reviewer is signing their name to.'},
+  {t:'Open the basis where the evidence is',b:'For conflicts, the decision basis opens on master data instead of Alice, and shows which past products are affected. The reviewer can flag them for re-review without changing anything live in SAP.',view:'detail',g:'conflict',
+    a:'I\u2019m assuming a conflict can always be traced to specific, nameable past products in master data, not just a vague mismatch. I don\u2019t know if that lookup is reliably available at review time. If it is, opening straight to the disagreement lets the reviewer see the evidence immediately instead of hunting for it after reading Alice\u2019s case first.'},
+  {t:'Documentation is written while you work',b:'The decision bar states what will be recorded before you approve. Approving moves the stepper to Documentation and hands over to a senior reviewer, which keeps the four-eyes principle intact.',view:'detail',
+    a:'I\u2019m assuming a second-reviewer sign-off step already exists in traide\u2019s process and that this queue can hand off into it, rather than this being a new step to introduce. If that hook already exists, showing what gets recorded before approval keeps documentation as a byproduct of the decision instead of separate paperwork after it.'},
+  {t:'Overrides need a reason',b:'A structured reason turns every override into feedback for Alice and a defensible audit entry. Free text alone gets skipped under time pressure.',view:'detail',override:true,
+    a:'I\u2019m assuming an override reason can actually flow back into correcting or retraining Alice\u2019s suggestions, not just sit in an audit log. I have no visibility into that feedback loop. If the channel exists, a structured reason becomes usable signal instead of a compliance box nobody reads.'},
+  {t:'What I would measure',b:'Primary: median review time per queue item. Guardrail: corrections at sign-off and after release, so speed never costs accuracy. Also: the share of items routed to data owners and override reasons by category. In production, pace belongs in a team view, not as pressure on individuals.',view:'list',
+    a:'I\u2019m assuming traide can capture review start/stop timestamps and post-release correction events per item; I haven\u2019t seen instrumentation for either. If both are measurable, tracking them together stops speed from being optimised at the cost of accuracy, since the guardrail is watching for that trade-off in real time.'}
 ];
 
 /* state */
@@ -241,7 +206,7 @@ function renderList(){
   }).join('')+pin(1)+'</span>'+
   '<div class="tools"><button data-act="noop">'+ic('search','sm')+'Search</button><button data-act="noop">'+ic('filter','sm')+'Filter</button><button data-act="noop">'+ic('cols','sm')+'Columns</button><span class="pager">1 - '+rows.length+' of '+total+'</span></div></div>';
   if(done===ITEMS.length){
-    h+='<div class="donebar"><p><strong>All five sample products are reviewed.</strong> Median time per item: '+(m?fmtDur(m):'not measured')+'. Each one is waiting for sign-off from '+SIGNER+'.</p><button class="btn" data-act="reset">Reset the prototype</button></div>';
+    h+='<div class="donebar"><p><strong>All three sample products are reviewed.</strong> Median time per item: '+(m?fmtDur(m):'not measured')+'. Each one is waiting for sign-off from '+SIGNER+'.</p><button class="btn" data-act="reset">Reset the prototype</button></div>';
   }
   h+='<div class="listmeta"><p>'+esc(hint)+'</p><span data-host style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill"><b>'+done+'</b> of 25 reviewed</span><span class="pill">Median per item <b>'+(m?fmtDur(m):'not yet')+'</b></span>'+pin(14)+'</span></div>';
   h+='<div class="tablewrap"><table class="ltable"><thead><tr><th style="width:36px"><span class="cb" aria-hidden="true"></span></th><th><span class="sorth">Art. No.'+ic('sort','sm')+'</span></th><th><span class="sorth">Product'+ic('sort','sm')+'</span></th><th>Why it\u2019s here</th><th>Alice\u2019s suggestion</th><th data-host><span class="sorth">Needed by'+ic('sort','sm')+'</span>'+pin(2,'inside')+'</th><th><span class="sorth">Decision'+ic('sort','sm')+'</span></th></tr></thead><tbody>';
@@ -631,6 +596,7 @@ function positionNote(n,scroll){
   var p=document.querySelector('.pin[data-pin="'+n+'"]'),pop=$('#pop'),note=NOTES[n-1];
   document.querySelectorAll('.pin.active').forEach(function(x){x.classList.remove('active');});
   pop.innerHTML='<button class="pop-x" data-act="note-close" aria-label="Close note">\u00d7</button><div class="pop-n">Design note '+n+' of '+NOTES.length+'</div><h3>'+esc(note.t)+'</h3><p>'+esc(note.b)+'</p>'+
+    (note.a?'<p class="pop-assume"><strong>Assumption:</strong> '+esc(note.a)+'</p>':'')+
     '<div class="pop-nav"><button class="btn" data-act="note-prev"'+(n===1?' disabled':'')+'>Previous</button><button class="btn" data-act="note-next">'+(n===NOTES.length?'Done':'Next')+'</button></div>';
   pop.classList.add('show');
   if(!p||!p.offsetParent){pop.style.left='50%';pop.style.top='90px';pop.style.transform='translateX(-50%)';return;}
