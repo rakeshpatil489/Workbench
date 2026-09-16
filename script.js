@@ -45,7 +45,7 @@ var ITEMS=[
     text:'Is the space between the two walls a vacuum?',
     why:'Heading 9617 covers vacuum vessels. A double wall alone is not enough. Without a vacuum, this is a steel household article.',
     clues:['The product image shows a double wall','The description promises "cold for 24 hours", which suggests a vacuum but doesn\u2019t state it','Capacity is exactly 0.75 l, which still counts as "up to 0.75 l"'],
-    yes:'Yes, it is vacuum-insulated',no:'No, the walls are not vacuum-sealed',
+    yes:'Yes, vacuum-insulated',no:'No, not vacuum-sealed',
     factKey:'Wall construction',yesVal:'Double wall, vacuum-sealed',noVal:'Double wall, no vacuum',
     owner:{name:'Lukas Brenner',first:'Lukas',role:'Sourcing, Home and Outdoor',initials:'LB'},
     ask:'Is KT-7501 (Insulated bottle, 750 ml) vacuum-insulated between the two walls? A line from the supplier spec is enough.'
@@ -149,7 +149,7 @@ var S;
 function fresh(){
   var st={};
   ITEMS.forEach(function(it){st[it.id]={status:'open',answer:null,by:null,choice:null,override:null,flag:true,confirmed:{},events:[],openedAt:null,askedAt:null,askText:''};});
-  return {view:'list',tab:'all',cur:null,basis:'alice',st:st,durations:[],notes:false,note:null,ovOpen:false,closed:{},cardClosed:{},qa:{},menu:false,flash:false};
+  return {view:'list',tab:'all',cur:null,basis:'alice',st:st,durations:[],notes:false,note:null,ovOpen:false,closed:{},cardClosed:{},qa:{},menu:false,flash:false,evOpen:{}};
 }
 S=fresh();
 
@@ -234,64 +234,73 @@ function shownConf(it,st,i){
   if(it.group==='fact'&&st.choice!==null&&!st.override){var s=it.cands[st.choice];return i===st.choice?s.after:Math.max(1,99-s.after);}
   return it.cands[i].conf;
 }
-function treeHTML(it,st){
-  var nodes='',lvl;
-  if(it.shared.length){
-    it.shared.forEach(function(n,i){nodes+='<li class="node'+(i?' has-parent':'')+'" style="--lvl:'+i+'"><span class="node-k">'+esc(n[0])+'</span><span class="node-v">'+esc(n[1])+'</span></li>';});
-    lvl=it.shared.length;
-  } else {
-    nodes='<li class="node none" style="--lvl:0"><span class="node-k">Tariff</span><span class="node-v">No shared path below this point</span></li>';lvl=1;
-  }
-  var sel=st.override?-1:st.choice, locked=st.status!=='open';
-  var cands=it.cands.map(function(c,i){
-    var shown=shownConf(it,st,i),cls=sel===null?'':(sel===i?'is-sel':'is-dim');
+function tclistHTML(it,st){
+  var sel=st.override?-1:st.choice;
+  return '<div class="tclist">'+it.cands.map(function(c,i){
+    var shown=shownConf(it,st,i),cls=sel===null?'':(sel===i?'win':'lose');
     var pct=shown!==c.conf?'<s>'+c.conf+'%</s>'+shown+'%':c.conf+'%';
-    return '<li class="cand '+cls+'"><button class="cand-btn" data-choose="'+i+'"'+(locked?' disabled':'')+' aria-pressed="'+(sel===i)+'">'+
-      tcode(c.code,sel===i?'pend':'')+
-      '<span><span class="cand-title">'+esc(c.title)+'</span>'+(c.path?'<span class="cand-path">'+esc(c.path)+'</span>':'')+(c.tag?'<span class="cand-tag">'+esc(c.tag)+'</span>':'')+'</span>'+
-      '<span class="cand-conf"><span class="meter" role="img" aria-label="Confidence '+shown+' percent, threshold 90"><span class="fill'+(shown>=90?' over':'')+'" style="width:'+shown+'%"></span><span class="tick"></span></span><span class="pct">'+pct+'</span></span>'+
-      '<span class="cand-check" aria-hidden="true"><svg viewBox="0 0 20 20">'+P.check+'</svg></span></button></li>';
-  }).join('');
-  return '<div data-host><p class="subh">Where the codes split</p><p class="subp">'+esc(it.split)+'</p>'+pin(5)+
-    '<ol class="tree">'+nodes+'</ol><ul class="fork g-'+it.group+'" style="--lvl:'+lvl+'">'+cands+'</ul></div>'+
-    '<p class="legend" data-host><span class="meter mini" aria-hidden="true"><span class="tick"></span></span>The marker is Alice\u2019s 90% release threshold. Anything below it comes to this queue.'+pin(6,'inside')+'</p>';
+    return '<div class="trow '+cls+'">'+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct">'+pct+'</span></div>';
+  }).join('')+'</div>';
 }
-function decideFact(it,st){
-  var q=it.q;
+function evidenceHTML(it,st){
+  var open=!!S.evOpen[it.id];
+  return '<button type="button" class="link sm evtog" data-act="ev-toggle" aria-expanded="'+open+'">Why is Alice asking? \u00b7 View evidence ('+it.q.clues.length+')</button>'+
+    (open?'<p class="q-why">'+esc(it.q.why)+'</p><ul class="clues">'+it.q.clues.map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ul>':'');
+}
+function tariffFact(it,st){
+  var q=it.q,head='<p class="subh">Two possible classifications</p><p class="subp">One fact decides between them.</p>'+tclistHTML(it,st);
   if(st.status==='waiting'){
-    return '<div class="decide g-fact"><p class="dlabel">Waiting for an answer</p><p class="q-text">'+esc(q.owner.name)+' has the question</p><p class="q-why">Sent at '+st.askedAt+'. The product is out of your way and returns to the queue when '+esc(q.owner.first)+' answers.</p><div class="waitq">'+esc(st.askText)+'</div>'+
+    return head+'<div class="decide g-fact" data-host>'+pin(7,'inside')+'<p class="dlabel">Waiting for an answer</p><p class="q-text">'+esc(q.owner.name)+' has the question</p><p class="q-why">Sent at '+st.askedAt+'. The product is out of your way and returns to the queue when '+esc(q.owner.first)+' answers.</p><div class="waitq">'+esc(st.askText)+'</div>'+
       '<div class="row"><button class="btn" data-act="sim-reply">Simulate '+esc(q.owner.first)+'\u2019s reply</button><span class="proto">Prototype only</span><button class="link" data-act="cancel-ask">Withdraw the question</button></div></div>';
   }
   var dis=st.status==='approved'?' disabled':'',ans=st.answer,sc=st.choice!==null&&!st.override?it.cands[st.choice]:null;
-  return '<div class="decide g-fact" data-host>'+pin(7,'inside')+
-    '<p class="dlabel">Alice needs one fact</p><p class="q-text">'+esc(q.text)+'</p><p class="q-why">'+esc(q.why)+'</p>'+
-    '<ul class="clues">'+q.clues.map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ul>'+
-    '<div class="answers" role="radiogroup" aria-label="Your answer">'+
+  return head+'<div class="decide g-fact" data-host>'+pin(7,'inside')+
+    '<p class="dlabel">Alice needs one fact</p><p class="q-text">'+esc(q.text)+'</p>'+
+    evidenceHTML(it,st)+
+    '<div class="answers" role="group" aria-label="Your answer">'+
       '<button type="button" class="ans'+(ans==='yes'?' on':'')+'" data-answer="yes"'+dis+' role="radio" aria-checked="'+(ans==='yes')+'"><span class="ans-radio" aria-hidden="true"></span>'+esc(q.yes)+'</button>'+
-      '<button type="button" class="ans'+(ans==='no'?' on':'')+'" data-answer="no"'+dis+' role="radio" aria-checked="'+(ans==='no')+'"><span class="ans-radio" aria-hidden="true"></span>'+esc(q.no)+'</button></div>'+
+      '<button type="button" class="ans'+(ans==='no'?' on':'')+'" data-answer="no"'+dis+' role="radio" aria-checked="'+(ans==='no')+'"><span class="ans-radio" aria-hidden="true"></span>'+esc(q.no)+'</button>'+
+      '<span data-host style="display:inline-flex"><button type="button" class="ans" data-act="ask"'+dis+'><span class="ans-radio" aria-hidden="true"></span>I don\u2019t know \u2014 ask the owner</button>'+pin(8,'inside')+'</span>'+
+    '</div>'+
     (ans?'<p class="chosen">'+ic('checkc','sm')+'Your answer: <strong>'+esc(ans==='yes'?q.yes:q.no)+'</strong></p>':'')+
     (ans&&sc?'<p class="answered">'+(st.by==='you'?'Recorded as your answer.':'Answered by '+esc(q.owner.name)+'.')+' '+sc.code+' is now at '+sc.after+'%, above the release threshold.</p>':'')+
-    '<div class="ask" data-host><span>Not sure?</span><button class="link" data-act="ask"'+dis+'>Ask '+esc(q.owner.name)+', '+esc(q.owner.role)+'</button>'+pin(8,'inside')+'</div></div>';
+    '</div>';
 }
-function decideJudge(it,st){
-  var j=it.judge,dis=st.status==='approved'?' disabled':'';
-  return '<div class="decide g-judgment" data-host>'+pin(10,'inside')+
+function judgeEvidenceHTML(it,st){
+  var open=!!S.evOpen[it.id],j=it.judge;
+  return '<button type="button" class="link sm evtog" data-act="ev-toggle" aria-expanded="'+open+'">Why does this need a judgment call? · View both cases</button>'+
+    (open?'<div class="cases">'+it.cands.map(function(c,i){
+      return '<div class="case"><h3>The case for <span class="mono">'+c.code+'</span></h3><ul>'+j.cases[i].map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
+    }).join('')+'</div>':'');
+}
+function tariffJudge(it,st){
+  var j=it.judge,dis=st.status==='approved'?' disabled':'',sel=st.override?-1:st.choice;
+  var head='<p class="subh">Two possible classifications</p><p class="subp">The tariff can be read two ways. You make the call.</p>'+tclistHTML(it,st);
+  return head+'<div class="decide g-judgment" data-host>'+pin(10,'inside')+
     '<p class="dlabel">Your call</p><p class="q-text">'+esc(j.frame)+'</p>'+
-    '<div class="cases">'+it.cands.map(function(c,i){
-      var on=st.choice===i&&!st.override;
-      return '<div class="case'+(on?' on':'')+'"><h3>The case for <span class="mono">'+c.code+'</span></h3><ul>'+j.cases[i].map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>'+
-        '<button class="btn" data-choose="'+i+'"'+dis+' aria-pressed="'+on+'">'+(on?'Chosen':'Choose this code')+'</button></div>';
+    judgeEvidenceHTML(it,st)+
+    '<div class="answers" role="radiogroup" aria-label="Your call">'+it.cands.map(function(c,i){
+      var on=sel===i;
+      return '<button type="button" class="ans'+(on?' on':'')+'" data-choose="'+i+'"'+dis+' role="radio" aria-checked="'+on+'"><span class="ans-radio" aria-hidden="true"></span>Choose <span class="mono">'+c.code+'</span></button>';
     }).join('')+'</div>'+
+    (sel!==null&&sel>=0?'<p class="chosen">'+ic('checkc','sm')+'Your answer: <strong>Choose '+it.cands[sel].code+'</strong></p>':'')+
     '<p class="lean">Alice leans toward '+it.cands[0].code+' at '+it.cands[0].conf+'%. Nothing is preselected, because you sign this decision.</p></div>';
 }
 function masterTable(rows){
   return '<table class="mtable"><thead><tr><th>Product</th><th>Code</th><th>Decided by</th><th>When</th></tr></thead><tbody>'+
     rows.map(function(r){return '<tr><td><span class="mono">'+r[0]+'</span><br>'+esc(r[1])+'</td><td class="mono" style="white-space:nowrap">'+r[2]+'</td><td>'+esc(r[3])+'</td><td style="white-space:nowrap">'+esc(r[4])+'</td></tr>';}).join('')+'</tbody></table>';
 }
-function decideConflict(it,st){
+function conflictEvidenceHTML(it,st){
+  var open=!!S.evOpen[it.id];
+  return '<button type="button" class="link sm evtog" data-act="ev-toggle" aria-expanded="'+open+'">Why is there a conflict? · View evidence</button>'+
+    (open?'<p class="q-why">'+esc(it.conflict.text)+' The affected products are listed under Master data on the right.</p>':'');
+}
+function tariffConflict(it,st){
   var dis=st.status==='approved'?' disabled':'',c0=st.choice===0&&!st.override,c1=st.choice===1&&!st.override;
-  return '<div class="decide g-conflict" data-host>'+pin(11,'inside')+
-    '<p class="dlabel">Settle the conflict</p><p class="q-text">Is this harness a vehicle wiring set, as your master data suggests?</p><p class="q-why">'+esc(it.conflict.text)+' The affected products are listed under Master data on the right.</p>'+
+  var head='<p class="subh">Two possible classifications</p><p class="subp">Alice disagrees with your master data. One of the two is wrong.</p>'+tclistHTML(it,st);
+  return head+'<div class="decide g-conflict" data-host>'+pin(11,'inside')+
+    '<p class="dlabel">Settle the conflict</p><p class="q-text">Is this harness a vehicle wiring set, as your master data suggests?</p>'+
+    conflictEvidenceHTML(it,st)+
     '<div class="answers" role="radiogroup" aria-label="Which code is right">'+
       '<button type="button" class="ans'+(c0?' on':'')+'" data-choose="0"'+dis+' role="radio" aria-checked="'+c0+'"><span class="ans-radio" aria-hidden="true"></span>No, use '+it.cands[0].code+'</button>'+
       '<button type="button" class="ans'+(c1?' on':'')+'" data-choose="1"'+dis+' role="radio" aria-checked="'+c1+'"><span class="ans-radio" aria-hidden="true"></span>Yes, keep '+it.cands[1].code+'</button></div>'+
@@ -396,10 +405,9 @@ function basisHTML(it,st){
 }
 function renderDetail(){
   var it=cur(),st=stOf(it),idx=ITEMS.indexOf(it)+1;
-  var decide=it.group==='fact'?decideFact(it,st):it.group==='judgment'?decideJudge(it,st):decideConflict(it,st);
   var code=currentCode(it,st);
   var fieldCls=st.status==='approved'?'':(code?'pend':'empty');
-  var tariffBody=treeHTML(it,st)+decide+
+  var tariffBody=(it.group==='fact'?tariffFact(it,st):it.group==='judgment'?tariffJudge(it,st):tariffConflict(it,st))+
     '<div class="tfield"><span class="k" style="color:var(--ink-3);margin-right:6px">Tariff number</span>'+tcode(code,fieldCls+(S.flash?' flash':''))+
     '<button class="sqbtn" data-act="override" aria-label="Enter another code"'+(st.status!=='open'?' disabled':'')+'>'+ic('pencil','sm')+'</button><button class="sqbtn" data-act="noop" aria-label="Browse the tariff">'+ic('list','sm')+'</button>'+
     '<span class="cap">'+(st.status==='approved'?'Reviewed by you':(code?'Selected, not yet approved':'Not decided'))+'</span></div>';
@@ -425,14 +433,6 @@ function renderDetail(){
     '</div></div>';
   $('#main').innerHTML=h;
   S.flash=false;
-  requestAnimationFrame(layoutFork);
-}
-function layoutFork(){
-  document.querySelectorAll('.fork').forEach(function(f){
-    var cs=f.querySelectorAll(':scope > .cand');if(!cs.length)return;
-    var last=cs[cs.length-1];
-    f.style.setProperty('--b',(f.clientHeight-(last.offsetTop+last.offsetHeight/2)-1)+'px');
-  });
 }
 
 function renderAll(keepScroll){
@@ -641,6 +641,7 @@ document.addEventListener('click',function(e){
     case 'ov-cancel':S.ovOpen=false;renderAll(true);break;
     case 'ov-apply':applyOverride();break;
     case 'ask':openAsk();break;
+    case 'ev-toggle':(function(){var it=cur();S.evOpen[it.id]=!S.evOpen[it.id];renderAll(true);})();break;
     case 'ask-cancel':closeAsk();break;
     case 'ask-send':sendAsk();break;
     case 'sim-reply':simReply();break;
@@ -666,9 +667,8 @@ document.addEventListener('change',function(e){
   if(e.target.id==='notesToggle'){setNotes(e.target.checked);if(e.target.checked)openNote(1);return;}
   if(e.target.hasAttribute('data-flag')){var it=cur();stOf(it).flag=e.target.checked;renderAll(true);}
 });
-window.addEventListener('resize',function(){layoutFork();if(S.note!==null)positionNote(S.note,false);});
+window.addEventListener('resize',function(){if(S.note!==null)positionNote(S.note,false);});
 document.addEventListener('scroll',function(){if(S.note!==null)positionNote(S.note,false);},{passive:true,capture:true});
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layoutFork);
 
 renderAll(false);
 openBrief();

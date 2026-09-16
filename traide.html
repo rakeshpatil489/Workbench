@@ -10,7 +10,7 @@
 <style>
 :root{
   --bg:#FFFFFF; --panel:#F6F7F9; --ai:#F3F6FC; --ink:#1B1F29; --ink-2:#4B5263; --ink-3:#8A909E;
-  --rule:#E7E9EE; --line:#C3C8D2; --track:#E8EBF0;
+  --rule:#c1c1c1; --line:#C3C8D2; --track:#E8EBF0;
   --blue:#3657D3; --blue-2:#2F4FC0; --blue-bg:#EBF0FD; --blue-hover:#2C4BC0;
   --ok:#2E9E57; --ok-bg:#E7F6EC; --toast:#3AA55B;
   --fact:#B4650A; --fact-bg:#FDF2E3; --judg:#6B4FD8; --judg-bg:#F1EDFD; --conf:#C23B5C; --conf-bg:#FCEBEF;
@@ -727,7 +727,7 @@ function renderList(){
   var total=S.tab==='all'?25:GROUPS[S.tab].total;
   var done=approvedCount(), m=median(S.durations);
   var hint=S.tab==='all'?'Every suggestion below Alice\u2019s 90% release threshold, tagged with why she is unsure.':GROUPS[S.tab].hint;
-  var h='<div class="topbar"><h1>'+ic('queue')+'Review queue</h1><span class="pill">Q4 launch project</span><button class="ghost" style="margin-left:auto" data-act="noop">'+ic('gauge')+'Review rules for this project</button></div>';
+  var h='<div class="topbar"><h1>'+ic('queue')+'Review queue</h1><span class="pill">Q4 launch project</span></div>';
   h+='<div class="tabs" role="tablist"><span data-host style="display:flex;gap:4px;flex-wrap:wrap">'+tabs.map(function(t){
     return '<button class="tab t-'+t[0]+'" role="tab" data-ltab="'+t[0]+'" aria-selected="'+(S.tab===t[0])+'">'+(t[0]!=='all'?'<span class="dot"></span>':'')+t[1]+'<span class="n">'+t[2]+'</span></button>';
   }).join('')+pin(1)+'</span>'+
