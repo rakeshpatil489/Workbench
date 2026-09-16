@@ -118,8 +118,8 @@ var NOTES=[
     a:'I\u2019m assuming Alice\u2019s model can actually label why its confidence is low, not just emit a score. I haven\u2019t seen that output, so this is the one signal the whole concept leans on. If it exists, grouping by it turns one number into three different playbooks instead of one queue everyone reads the same way.'},
   {t:'Sort by deadline',b:'Reviewers work against shipments and launches. The queue is sorted by when each product is needed, so it answers "what blocks revenue first" rather than "what scored lowest".',view:'list',
     a:'I\u2019m assuming a trustworthy need-by date is already attached to each product; the dates here are sample values, not data from a live shipment plan. If real deadlines are that reliable, sorting by them tells a reviewer what\u2019s urgent without them having to reconstruct it from context.'},
-  {t:'Fits the product that exists',b:'The queue sits next to Projects and reuses traide\u2019s list, stepper and decision basis panel with Alice. The surface area is small, which makes it cheap to ship and easy to learn.',
-    a:'I\u2019m assuming traide already has a list view, a stepper and a decision-basis-with-Alice panel that this queue can slot into, based on what I could see from outside, not the live design system. If that\u2019s accurate, this ships as a thin layer over existing pieces instead of a new app to learn and maintain.'},
+  {t:'Fits the product that exists',b:'The queue sits next to Projects and reuses traide\u2019s list and decision basis panel with Alice. The surface area is small, which makes it cheap to ship and easy to learn.',
+    a:'I\u2019m assuming traide already has a list view and a decision-basis-with-Alice panel that this queue can slot into, based on what I could see from outside, not the live design system. If that\u2019s accurate, this ships as a thin layer over existing pieces instead of a new app to learn and maintain.'},
   {t:'Say why before asking what',b:'The banner tells the reviewer what kind of work this is before they read anything else: find a fact, make a call, or settle a conflict.',view:'detail',
     a:'This depends on the same cause label from note 1 being reliable enough to lead with, before the reviewer has read any product detail. If it is, naming the type of work up front saves the reviewer from diagnosing the cause themselves on every single item.'},
   {t:'Show only where the codes disagree',b:'The path both codes share is settled, so it collapses into a quiet tree. The reviewer checks one fork, marked by the diamond, instead of re-deriving a whole classification.',view:'detail',
@@ -136,7 +136,7 @@ var NOTES=[
     a:'I\u2019m assuming reviewers are prone to defaulting to whatever\u2019s preselected under time pressure, based on general findings on AI-assisted decisions, not data on this team\u2019s behavior. If that bias is real here, leaving the choice unmade forces an active decision on exactly the call the reviewer is signing their name to.'},
   {t:'Open the basis where the evidence is',b:'For conflicts, the decision basis opens on master data instead of Alice, and shows which past products are affected. The reviewer can flag them for re-review without changing anything live in SAP.',view:'detail',g:'conflict',
     a:'I\u2019m assuming a conflict can always be traced to specific, nameable past products in master data, not just a vague mismatch. I don\u2019t know if that lookup is reliably available at review time. If it is, opening straight to the disagreement lets the reviewer see the evidence immediately instead of hunting for it after reading Alice\u2019s case first.'},
-  {t:'Documentation is written while you work',b:'The decision bar states what will be recorded before you approve. Approving moves the stepper to Documentation and hands over to a senior reviewer, which keeps the four-eyes principle intact.',view:'detail',
+  {t:'Documentation is written while you work',b:'The decision bar states what will be recorded before you approve. Approving moves the product to Documentation and hands over to a senior reviewer, which keeps the four-eyes principle intact.',view:'detail',
     a:'I\u2019m assuming a second-reviewer sign-off step already exists in traide\u2019s process and that this queue can hand off into it, rather than this being a new step to introduce. If that hook already exists, showing what gets recorded before approval keeps documentation as a byproduct of the decision instead of separate paperwork after it.'},
   {t:'Overrides need a reason',b:'A structured reason turns every override into feedback for Alice and a defensible audit entry. Free text alone gets skipped under time pressure.',view:'detail',override:true,
     a:'I\u2019m assuming an override reason can actually flow back into correcting or retraining Alice\u2019s suggestions, not just sit in an audit log. I have no visibility into that feedback loop. If the channel exists, a structured reason becomes usable signal instead of a compliance box nobody reads.'},
@@ -344,13 +344,6 @@ function sect(key,title,body){
   var closed=S.closed[key];
   return '<section class="sect'+(closed?' closed':'')+'"><button class="shead" data-sect="'+key+'" aria-expanded="'+!closed+'"><h2>'+title+'</h2>'+ic('up')+'</button><div class="sbody">'+body+'</div></section>';
 }
-function stepperHTML(st){
-  var approved=st.status==='approved';
-  return '<div class="stepper">'+
-    '<div class="stp done"><span class="c">'+ic('check','sm')+'</span><span class="t">Product</span></div><span class="sline done"></span>'+
-    '<div class="stp '+(approved?'done':'active')+'"><span class="c">'+(approved?ic('check','sm'):'2')+'</span><span class="t">Decision'+(st.status==='waiting'?'<small>Paused</small>':'')+'</span></div><span class="sline'+(approved?' done':'')+'"></span>'+
-    '<div class="stp '+(approved?'active':'todo')+'"><span class="c">3</span><span class="t">Documentation'+(approved?'<small>Waiting for sign-off</small>':'')+'</span></div></div>';
-}
 function recordText(it,st){
   if(st.override)return 'your code, your reason, the suggestion you replaced and your name';
   if(it.group==='fact')return 'the answer from '+(st.by==='you'?'you':it.q.owner.name)+', Alice\u2019s reasoning and your name';
@@ -416,9 +409,8 @@ function renderDetail(){
   var seg=[['fast','Fast Lane','gauge'],['master','Master data','db'],['alice','Alice\u2019s suggestion','chat']];
   var h='<div class="dtop"><button class="crumb" data-act="go-list">'+ic('left','sm')+'Review queue</button><span class="art">'+ic('box','sm')+it.id+'</span><span class="dname">'+esc(it.name)+'</span>'+
     '<div class="dnav"><span class="pos"><b>'+idx+'</b> <span>/ '+ITEMS.length+'</span></span><button data-act="prev" aria-label="Previous product">'+ic('up','sm')+'</button><button data-act="next" aria-label="Next product">'+ic('down','sm')+'</button></div></div>'+
-    stepperHTML(st)+
     '<div class="dbody"><div class="dleft"><div class="dscroll">'+
-      '<p class="lbl">Your decision</p>'+
+      '<h2 class="dtitle">Your decision</h2>'+
       '<div class="banner" data-host>'+pin(4)+'<div class="brow"><span class="cause g-'+it.group+'">'+GROUPS[it.group].label+'</span><span class="due">Needed by '+it.due+' for the '+esc(it.dueFor)+'</span></div><p>'+esc(GROUPS[it.group].hint)+'</p></div>'+
       sect('product','Product',productBody)+
       sect('tariff','Tariff classification',tariffBody)+

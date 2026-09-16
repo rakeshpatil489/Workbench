@@ -152,20 +152,11 @@ table{border-collapse:collapse;width:100%}
 .dnav .pos span{color:var(--ink-3)}
 .dnav button{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;background:var(--panel)}
 .dnav button:hover{background:var(--rule)}
-.stepper{display:flex;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid var(--rule)}
-.stp{display:flex;align-items:center;gap:12px;white-space:nowrap}
-.stp .c{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:500;font-size:13px;background:var(--panel);color:var(--ink-3)}
-.stp.done .c{background:var(--blue-bg);color:var(--blue)}
-.stp.active .c{background:var(--blue-bg);color:var(--blue);box-shadow:0 0 0 1.5px var(--blue)}
-.stp .t{font-weight:500}
-.stp .t small{display:block;font-weight:400;font-size:12px;color:var(--ink-3);line-height:1.2}
-.stp.todo .t{color:var(--ink-2)}
-.sline{flex:0 1 180px;min-width:24px;height:2px;background:var(--rule)}
-.sline.done{background:var(--blue)}
 .dbody{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,42%)}
 .dleft{display:flex;flex-direction:column;min-height:0;min-width:0}
 .dscroll{flex:1;overflow:auto;padding:18px 24px 28px}
 .lbl{color:var(--ink-2);font-weight:500;margin-bottom:12px}
+.dtitle{font-size:21px;margin-bottom:14px}
 .banner{display:flex;flex-direction:column;gap:8px;padding:14px 16px;border-radius:10px;border:1px solid var(--rule);margin-bottom:14px}
 .banner .brow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
 .banner .due{font-weight:600;font-size:13px}
@@ -211,7 +202,7 @@ tr.missing td:nth-child(2){color:var(--fact);font-weight:600}
 
 /* decide */
 .decide{margin-top:16px;padding:16px;border-radius:10px;border:1px solid var(--rule);border-left-width:4px}
-.decide.g-fact{border-left-color:var(--fact)}
+.decide.g-fact{border-left-color:var(--fact);background:#f3f3f3}
 .decide.g-judgment{border-left-color:var(--judg)}
 .decide.g-conflict{border-left-color:var(--conf)}
 .decide .dlabel{font-size:12.5px;font-weight:600;color:var(--ink-3)}
@@ -387,8 +378,7 @@ body.notes-on .pin.active{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--meta)}
   .brandrow{flex:1}
   .strip p{display:none}
   .strip{justify-content:flex-end}
-  .topbar,.dtop,.stepper,.decision{padding-left:14px;padding-right:14px}
-  .stepper{overflow-x:auto}
+  .topbar,.dtop,.decision{padding-left:14px;padding-right:14px}
   .tabs{padding:12px 14px 0}
   .tools{display:none}
   .listmeta{padding:12px 14px 4px}
