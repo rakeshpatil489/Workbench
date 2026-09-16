@@ -337,7 +337,7 @@ function auditHTML(it,st){
     {t:'09:03',who:'System',text:it.group==='conflict'?'Sent to review: below 90% and differs from 3 master data products':'Sent to review: below the 90% release threshold'}
   ];
   return '<ol class="audit">'+base.concat(st.events).map(function(e){
-    return '<li class="'+(e.who==='You'?'you':'')+'"><div class="a-meta">'+e.t+', '+esc(e.who)+'</div><div class="a-text">'+esc(e.text)+'</div></li>';
+    return '<li class="done"><span class="a-check" aria-hidden="true">'+ic('checkc','sm')+'</span><div class="a-meta">'+e.t+', '+esc(e.who)+'</div><div class="a-text">'+esc(e.text)+'</div></li>';
   }).join('')+'<li class="pending"><div class="a-meta">Next</div><div class="a-text">'+(st.status==='approved'?'Sign-off by '+SIGNER:'Your review, then sign-off by '+SIGNER)+'</div></li></ol>';
 }
 function sect(key,title,body){

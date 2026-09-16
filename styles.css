@@ -246,11 +246,12 @@ tr.missing td:nth-child(2){color:var(--fact);font-weight:600}
 /* documentation */
 .audit{list-style:none;margin:0;padding:0;position:relative}
 .audit::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;border-left:2px solid var(--rule)}
-.audit li{position:relative;padding:0 0 14px 24px}
+.audit li{position:relative;padding:0 0 14px 26px}
 .audit li::before{content:"";position:absolute;left:0;top:5px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--line)}
-.audit li.you::before{border-color:var(--blue);background:var(--blue)}
-.audit li.pending::before{border-style:dashed}
+.audit li.done::before{display:none}
+.audit li.pending::before{background:var(--blue);border-color:var(--blue)}
 .audit li.pending{color:var(--ink-3)}
+.a-check{position:absolute;left:-3px;top:1px;color:var(--ok);background:var(--bg);border-radius:50%}
 .a-meta{font-size:12px;color:var(--ink-3)}
 .a-text{font-size:13.5px}
 
