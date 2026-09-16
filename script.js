@@ -65,10 +65,10 @@ var ITEMS=[
   shared:[],
   split:'The two codes sit in different sections. The facts are known. The question is what this product principally is.',
   cands:[
-    {code:'8517.62.00',title:'Machines for receiving, converting and transmitting data',conf:64,path:'Section XVI, chapter 85'},
-    {code:'9102.12.00',title:'Wrist-watches, electrically operated, with opto-electronic display',conf:31,path:'Section XVIII, chapter 91'}
+    {code:'8517.62.00',title:'Machines for receiving, converting and transmitting data',conf:64,path:'Section XVI, chapter 85',short:'Data exchange'},
+    {code:'9102.12.00',title:'Wrist-watches, electrically operated, with opto-electronic display',conf:31,path:'Section XVIII, chapter 91',short:'Timekeeping'}
   ],
-  judge:{frame:'Which function gives this product its character: exchanging data, or telling the time?',cases:[
+  judge:{frame:'Which function gives this product its principal character?',cases:[
     ['Sends messages, calls and health data over LTE without a phone','Most of the spec sheet is about connectivity','Comparable connected wearables have been placed in 8517 62'],
     ['Worn on the wrist and marketed as a watch','Shows the time permanently on its display','Still works as a watch with no connection']
   ]},
@@ -266,6 +266,14 @@ function tariffFact(it,st){
     (ans&&sc?'<p class="answered">'+(st.by==='you'?'Recorded as your answer.':'Answered by '+esc(q.owner.name)+'.')+' '+sc.code+' is now at '+sc.after+'%, above the release threshold.</p>':'')+
     '</div>';
 }
+function judgeClassificationsHTML(it,st){
+  var sel=st.override?-1:st.choice;
+  return '<div class="tclist">'+it.cands.map(function(c,i){
+    var cls=sel===null?'':(sel===i?'win':'lose');
+    var tag=i===0?'<span class="cand-tag alice">Alice’s suggestion</span>':'<span class="cand-tag">Alternative</span>';
+    return '<div class="trow '+cls+'">'+tag+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct">'+c.conf+'% confidence</span></div>';
+  }).join('')+'</div>';
+}
 function judgeEvidenceHTML(it,st){
   var open=!!S.evOpen[it.id],j=it.judge;
   return '<button type="button" class="link sm evtog" data-act="ev-toggle" aria-expanded="'+open+'">Why does this need a judgment call? · View both cases</button>'+
@@ -275,16 +283,16 @@ function judgeEvidenceHTML(it,st){
 }
 function tariffJudge(it,st){
   var j=it.judge,dis=st.status==='approved'?' disabled':'',sel=st.override?-1:st.choice;
-  var head='<p class="subh">Two possible classifications</p><p class="subp">The tariff can be read two ways. You make the call.</p>'+tclistHTML(it,st);
+  var head='<p class="subh">Two possible classifications</p><p class="subp">The tariff can be read two ways. You make the call.</p>'+judgeClassificationsHTML(it,st);
   return head+'<div class="decide g-judgment" data-host>'+pin(10,'inside')+
     '<p class="dlabel">Your call</p><p class="q-text">'+esc(j.frame)+'</p>'+
     judgeEvidenceHTML(it,st)+
     '<div class="answers" role="radiogroup" aria-label="Your call">'+it.cands.map(function(c,i){
       var on=sel===i;
-      return '<button type="button" class="ans'+(on?' on':'')+'" data-choose="'+i+'"'+dis+' role="radio" aria-checked="'+on+'"><span class="ans-radio" aria-hidden="true"></span>Choose <span class="mono">'+c.code+'</span></button>';
+      return '<button type="button" class="ans'+(on?' on':'')+'" data-choose="'+i+'"'+dis+' role="radio" aria-checked="'+on+'"><span class="ans-radio" aria-hidden="true"></span>'+c.code+' — '+esc(c.short)+'</button>';
     }).join('')+'</div>'+
-    (sel!==null&&sel>=0?'<p class="chosen">'+ic('checkc','sm')+'Your answer: <strong>Choose '+it.cands[sel].code+'</strong></p>':'')+
-    '<p class="lean">Alice leans toward '+it.cands[0].code+' at '+it.cands[0].conf+'%. Nothing is preselected, because you sign this decision.</p></div>';
+    (sel!==null&&sel>=0?'<p class="chosen">'+ic('checkc','sm')+'Your answer: <strong>'+it.cands[sel].code+' — '+esc(it.cands[sel].short)+'</strong></p>':'')+
+    '</div>';
 }
 function masterTable(rows){
   return '<table class="mtable"><thead><tr><th>Product</th><th>Code</th><th>Decided by</th><th>When</th></tr></thead><tbody>'+

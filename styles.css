@@ -193,10 +193,11 @@ tr.missing td:nth-child(2){color:var(--fact);font-weight:600}
 .trow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--rule);border-radius:10px;background:var(--bg);transition:opacity .3s ease}
 .trow.win{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
 .trow.lose{opacity:.55}
-.trow .cand-title{flex:1}
 
 /* tariff candidates */
-.cand-title{display:block;line-height:1.35;font-size:13.5px}
+.cand-title{display:block;line-height:1.35;font-size:13.5px;flex:1}
+.cand-tag{flex:none;display:inline-block;font-size:11.5px;font-weight:500;color:var(--ink-2);background:var(--panel);border-radius:5px;padding:2px 7px}
+.cand-tag.alice{color:var(--blue);background:var(--blue-bg);font-weight:600}
 .pct{font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums;min-width:56px;text-align:right;white-space:nowrap}
 .pct s{color:var(--ink-3);font-weight:400;margin-right:3px}
 
@@ -232,7 +233,6 @@ tr.missing td:nth-child(2){color:var(--fact);font-weight:600}
 .case{border:1px solid var(--rule);border-radius:9px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .case h3{font-size:13px;font-weight:600}
 .case ul{margin:0;padding-left:16px;color:var(--ink-2);font-size:13px;display:flex;flex-direction:column;gap:3px;flex:1}
-.lean{margin-top:10px;font-size:13px;color:var(--ink-2)}
 .mtable{width:100%;font-size:13px;border:1px solid var(--rule);border-radius:8px;border-collapse:separate;border-spacing:0;overflow:hidden}
 .mtable th,.mtable td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
 .mtable tr:last-child td{border-bottom:0}
