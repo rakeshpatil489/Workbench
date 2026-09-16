@@ -104,10 +104,11 @@ var ITEMS=[
 ];
 
 var GROUPS={
-  fact:{label:'Missing information',hint:'The code depends on a fact the product data doesn\u2019t state. Get the fact, and the code follows.',total:11},
-  judgment:{label:'Needs experts judgment',hint:'The facts are known, but the tariff can be read two ways. You make the call.',total:9},
-  conflict:{label:'Master-Data conflict',hint:'Alice disagrees with how similar products were coded before. One of the two is wrong.',total:5}
+  fact:{label:'Missing information',hint:'The code depends on a fact the product data doesn\u2019t state. Get the fact, and the code follows.'},
+  judgment:{label:'Needs experts judgment',hint:'The facts are known, but the tariff can be read two ways. You make the call.'},
+  conflict:{label:'Master-Data conflict',hint:'Alice disagrees with how similar products were coded before. One of the two is wrong.'}
 };
+function groupCount(g){return ITEMS.filter(function(i){return i.group===g;}).length;}
 var REASONS=['The product data was wrong or incomplete','Alice misread the product','My legal reading differs','A binding ruling applies','Other, noted in the documentation'];
 var SIGNER='Dr. Miriam Brandt';
 var QQ=[['why','Why isn\u2019t this above 90%?'],['change','What would change the answer?'],['similar','How did we classify similar products?']];
@@ -178,7 +179,7 @@ function currentCode(it,st){
 
 /* sidebar */
 function renderSide(){
-  var left=25-approvedCount();
+  var left=ITEMS.length-approvedCount();
   $('#side').innerHTML=
     '<div class="brandrow"><span class="word">traide</span><button class="iconbtn" data-act="noop" aria-label="Collapse sidebar">'+ic('panel')+'</button></div>'+
     '<div class="newbtn"><button data-act="noop">'+ic('plus','sm')+'New product</button><button data-act="noop" aria-label="More ways to add">'+ic('down','sm')+'</button></div>'+
@@ -195,9 +196,9 @@ function renderSide(){
 
 /* list view */
 function renderList(){
-  var tabs=[['all','All',25],['fact',GROUPS.fact.label,11],['judgment',GROUPS.judgment.label,9],['conflict',GROUPS.conflict.label,5]];
+  var tabs=[['all','All',ITEMS.length],['fact',GROUPS.fact.label,groupCount('fact')],['judgment',GROUPS.judgment.label,groupCount('judgment')],['conflict',GROUPS.conflict.label,groupCount('conflict')]];
   var rows=ITEMS.filter(function(i){return S.tab==='all'||i.group===S.tab;});
-  var total=S.tab==='all'?25:GROUPS[S.tab].total;
+  var total=S.tab==='all'?ITEMS.length:groupCount(S.tab);
   var done=approvedCount(), m=median(S.durations);
   var hint=S.tab==='all'?'Every suggestion below Alice\u2019s 90% release threshold, tagged with why she is unsure.':GROUPS[S.tab].hint;
   var h='<div class="topbar"><h1>'+ic('queue')+'Review queue</h1><span class="pill">Q4 launch project</span><button class="ghost" style="margin-left:auto" data-act="noop">'+ic('gauge')+'Review rules for this project</button></div>';
@@ -208,7 +209,7 @@ function renderList(){
   if(done===ITEMS.length){
     h+='<div class="donebar"><p><strong>All three sample products are reviewed.</strong> Median time per item: '+(m?fmtDur(m):'not measured')+'. Each one is waiting for sign-off from '+SIGNER+'.</p><button class="btn" data-act="reset">Reset the prototype</button></div>';
   }
-  h+='<div class="listmeta"><p>'+esc(hint)+'</p><span data-host style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill"><b>'+done+'</b> of 25 reviewed</span><span class="pill">Median per item <b>'+(m?fmtDur(m):'not yet')+'</b></span>'+pin(14)+'</span></div>';
+  h+='<div class="listmeta"><p>'+esc(hint)+'</p><span data-host style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill"><b>'+done+'</b> of '+ITEMS.length+' reviewed</span><span class="pill">Median per item <b>'+(m?fmtDur(m):'not yet')+'</b></span>'+pin(14)+'</span></div>';
   h+='<div class="tablewrap"><table class="ltable"><thead><tr><th style="width:36px"><span class="cb" aria-hidden="true"></span></th><th><span class="sorth">Art. No.'+ic('sort','sm')+'</span></th><th><span class="sorth">Product'+ic('sort','sm')+'</span></th><th>Why it\u2019s here</th><th>Alice\u2019s suggestion</th><th data-host><span class="sorth">Needed by'+ic('sort','sm')+'</span>'+pin(2,'inside')+'</th><th><span class="sorth">Decision'+ic('sort','sm')+'</span></th></tr></thead><tbody>';
   rows.forEach(function(it){
     var st=stOf(it),badge,codeHTML;
@@ -265,10 +266,11 @@ function decideFact(it,st){
   return '<div class="decide g-fact" data-host>'+pin(7,'inside')+
     '<p class="dlabel">Alice needs one fact</p><p class="q-text">'+esc(q.text)+'</p><p class="q-why">'+esc(q.why)+'</p>'+
     '<ul class="clues">'+q.clues.map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ul>'+
-    '<div class="answers" role="group" aria-label="Your answer">'+
-      '<button class="ans'+(ans==='yes'?' on':'')+'" data-answer="yes"'+dis+' aria-pressed="'+(ans==='yes')+'"><kbd>Y</kbd>'+esc(q.yes)+'</button>'+
-      '<button class="ans'+(ans==='no'?' on':'')+'" data-answer="no"'+dis+' aria-pressed="'+(ans==='no')+'"><kbd>N</kbd>'+esc(q.no)+'</button></div>'+
-    (ans&&sc?'<p class="answered">Answered by '+(st.by==='you'?'you':esc(q.owner.name))+'. '+sc.code+' is now at '+sc.after+'%, above the release threshold.</p>':'')+
+    '<div class="answers" role="radiogroup" aria-label="Your answer">'+
+      '<button type="button" class="ans'+(ans==='yes'?' on':'')+'" data-answer="yes"'+dis+' role="radio" aria-checked="'+(ans==='yes')+'"><span class="ans-radio" aria-hidden="true"></span>'+esc(q.yes)+'</button>'+
+      '<button type="button" class="ans'+(ans==='no'?' on':'')+'" data-answer="no"'+dis+' role="radio" aria-checked="'+(ans==='no')+'"><span class="ans-radio" aria-hidden="true"></span>'+esc(q.no)+'</button></div>'+
+    (ans?'<p class="chosen">'+ic('checkc','sm')+'Your answer: <strong>'+esc(ans==='yes'?q.yes:q.no)+'</strong></p>':'')+
+    (ans&&sc?'<p class="answered">'+(st.by==='you'?'Recorded as your answer.':'Answered by '+esc(q.owner.name)+'.')+' '+sc.code+' is now at '+sc.after+'%, above the release threshold.</p>':'')+
     '<div class="ask" data-host><span>Not sure?</span><button class="link" data-act="ask"'+dis+'>Ask '+esc(q.owner.name)+', '+esc(q.owner.role)+'</button>'+pin(8,'inside')+'</div></div>';
 }
 function decideJudge(it,st){
@@ -278,7 +280,7 @@ function decideJudge(it,st){
     '<div class="cases">'+it.cands.map(function(c,i){
       var on=st.choice===i&&!st.override;
       return '<div class="case'+(on?' on':'')+'"><h3>The case for <span class="mono">'+c.code+'</span></h3><ul>'+j.cases[i].map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>'+
-        '<button class="btn" data-choose="'+i+'"'+dis+' aria-pressed="'+on+'"><kbd>'+(i+1)+'</kbd>'+(on?'Chosen':'Choose this code')+'</button></div>';
+        '<button class="btn" data-choose="'+i+'"'+dis+' aria-pressed="'+on+'">'+(on?'Chosen':'Choose this code')+'</button></div>';
     }).join('')+'</div>'+
     '<p class="lean">Alice leans toward '+it.cands[0].code+' at '+it.cands[0].conf+'%. Nothing is preselected, because you sign this decision.</p></div>';
 }
@@ -290,9 +292,10 @@ function decideConflict(it,st){
   var dis=st.status==='approved'?' disabled':'',c0=st.choice===0&&!st.override,c1=st.choice===1&&!st.override;
   return '<div class="decide g-conflict" data-host>'+pin(11,'inside')+
     '<p class="dlabel">Settle the conflict</p><p class="q-text">Is this harness a vehicle wiring set, as your master data suggests?</p><p class="q-why">'+esc(it.conflict.text)+' The affected products are listed under Master data on the right.</p>'+
-    '<div class="answers" role="group" aria-label="Which code is right">'+
-      '<button class="ans'+(c0?' on':'')+'" data-choose="0"'+dis+' aria-pressed="'+c0+'"><kbd>1</kbd>No, use '+it.cands[0].code+'</button>'+
-      '<button class="ans'+(c1?' on':'')+'" data-choose="1"'+dis+' aria-pressed="'+c1+'"><kbd>2</kbd>Yes, keep '+it.cands[1].code+'</button></div>'+
+    '<div class="answers" role="radiogroup" aria-label="Which code is right">'+
+      '<button type="button" class="ans'+(c0?' on':'')+'" data-choose="0"'+dis+' role="radio" aria-checked="'+c0+'"><span class="ans-radio" aria-hidden="true"></span>No, use '+it.cands[0].code+'</button>'+
+      '<button type="button" class="ans'+(c1?' on':'')+'" data-choose="1"'+dis+' role="radio" aria-checked="'+c1+'"><span class="ans-radio" aria-hidden="true"></span>Yes, keep '+it.cands[1].code+'</button></div>'+
+    (c0||c1?'<p class="chosen">'+ic('checkc','sm')+'Your answer: <strong>'+(c0?'No, use '+it.cands[0].code:'Yes, keep '+it.cands[1].code)+'</strong></p>':'')+
     (c0?'<label class="check"><input type="checkbox" data-flag'+(st.flag?' checked':'')+dis+'>Flag the 3 master data products for re-review</label><p class="hint">They stay valid until someone reviews them. Nothing changes in SAP yet.</p>':'')+
     '</div>';
 }
@@ -361,8 +364,7 @@ function decisionHTML(it,st){
   return ov+'<div class="dec-row" data-host>'+pin(12)+
     '<div class="dec-sum">'+(code?'<span class="line">'+tcode(code,'pend')+'<span class="dec-title">'+esc(title)+'</span></span><span class="dec-rec">Documented with '+recordText(it,st)+'.</span>':'<span class="dec-empty">'+emptyPrompt(it)+'</span>')+'</div>'+
     '<div class="dec-actions">'+(S.ovOpen?'':'<button class="link" data-act="override">Use another code</button>')+
-    '<button class="btn primary" data-act="approve"'+(code?'':' disabled')+'><kbd>A</kbd>Approve and send for sign-off</button></div></div>'+
-    '<p class="keys"><span><kbd>J</kbd><kbd>K</kbd>next, previous</span>'+(it.group==='fact'?'<span><kbd>Y</kbd><kbd>N</kbd>answer</span>':'')+'<span><kbd>1</kbd><kbd>2</kbd>choose</span><span><kbd>A</kbd>approve</span><span><kbd>Esc</kbd>back to queue</span></p>';
+    '<button class="btn primary" data-act="approve"'+(code?'':' disabled')+'>Approve and send for sign-off</button></div></div>';
 }
 function basisHTML(it,st){
   var h='';
@@ -405,7 +407,7 @@ function renderDetail(){
     factsHTML(it,st);
   var seg=[['fast','Fast Lane','gauge'],['master','Master data','db'],['alice','Alice\u2019s suggestion','chat']];
   var h='<div class="dtop"><button class="crumb" data-act="go-list">'+ic('left','sm')+'Review queue</button><span class="art">'+ic('box','sm')+it.id+'</span><span class="dname">'+esc(it.name)+'</span>'+
-    '<div class="dnav"><span class="pos"><b>'+idx+'</b> <span>/ 25</span></span><button data-act="prev" aria-label="Previous product">'+ic('up','sm')+'</button><button data-act="next" aria-label="Next product">'+ic('down','sm')+'</button></div></div>'+
+    '<div class="dnav"><span class="pos"><b>'+idx+'</b> <span>/ '+ITEMS.length+'</span></span><button data-act="prev" aria-label="Previous product">'+ic('up','sm')+'</button><button data-act="next" aria-label="Next product">'+ic('down','sm')+'</button></div></div>'+
     stepperHTML(st)+
     '<div class="dbody"><div class="dleft"><div class="dscroll">'+
       '<p class="lbl">Your decision</p>'+
@@ -663,33 +665,6 @@ document.addEventListener('submit',function(e){
 document.addEventListener('change',function(e){
   if(e.target.id==='notesToggle'){setNotes(e.target.checked);if(e.target.checked)openNote(1);return;}
   if(e.target.hasAttribute('data-flag')){var it=cur();stOf(it).flag=e.target.checked;renderAll(true);}
-});
-document.addEventListener('keydown',function(e){
-  var t=e.target;
-  if(t.classList&&t.classList.contains('pin')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openNote(+t.dataset.pin);return;}
-  if(t.tagName==='TR'&&t.hasAttribute('data-open')&&e.key==='Enter'){openItem(t.getAttribute('data-open'));return;}
-  if(e.key==='Escape'){
-    var had=S.note!==null||$('#askSheet').classList.contains('show')||$('#brief').classList.contains('show')||S.ovOpen||S.menu;
-    closeNote();closeAsk();closeBrief();
-    if(S.ovOpen||S.menu){S.ovOpen=false;S.menu=false;renderAll(true);}
-    if(!had&&S.view==='detail'&&!(t.matches&&t.matches('input,textarea,select')))goList();
-    return;
-  }
-  if(t.matches&&t.matches('input,textarea,select'))return;
-  if(e.metaKey||e.ctrlKey||e.altKey)return;
-  if($('#brief').classList.contains('show')||$('#askSheet').classList.contains('show'))return;
-  if(S.view!=='detail')return;
-  var it=cur();
-  switch(e.key.toLowerCase()){
-    case 'j':step(1);break;
-    case 'k':step(-1);break;
-    case 'y':if(it&&it.group==='fact'&&stOf(it).status==='open')answer('yes','you');break;
-    case 'n':if(it&&it.group==='fact'&&stOf(it).status==='open')answer('no','you');break;
-    case '1':choose(0);break;
-    case '2':choose(1);break;
-    case 'a':approve();break;
-    default:return;
-  }
 });
 window.addEventListener('resize',function(){layoutFork();if(S.note!==null)positionNote(S.note,false);});
 document.addEventListener('scroll',function(){if(S.note!==null)positionNote(S.note,false);},{passive:true,capture:true});
