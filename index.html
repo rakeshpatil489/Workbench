@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Review queue, a concept for traide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="strip">
+  <p>Concept prototype by Rakesh Patil for traide AI. Sample data, not affiliated with traide.</p>
+  <button class="sbtn" data-act="brief">Read the brief</button>
+  <label class="switch"><input type="checkbox" id="notesToggle"><span>Design notes</span></label>
+</div>
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <div class="main" id="main"></div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="brief" role="dialog" aria-modal="true" aria-labelledby="briefTitle">
+  <div class="brief">
+    <p class="by">A product design concept by Rakesh Patil</p>
+    <h1 id="briefTitle">A review queue that says why Alice is unsure</h1>
+    <p class="lede">A confidence score says how unsure Alice is, but not why. This concept groups the review queue by the reason, and reduces each item to the one decision that settles it.</p>
+    <h2>The problem</h2>
+    <p>Suggestions under 90% confidence skip batch release and wait for a person. That queue is where expert hours concentrate, and where a rushed approval turns into an audit finding.</p>
+    <h2>What I noticed</h2>
+    <p>Low confidence has different causes, and each needs a different action:</p>
+    <ul>
+      <li>A product fact is missing, so someone has to find it.</li>
+      <li>The tariff can be read two ways, so an expert has to decide.</li>
+      <li>Alice disagrees with the master data, so one of them is wrong.</li>
+    </ul>
+    <h2>Hypothesis</h2>
+    <p>If the queue is grouped by cause and each item shows only the decision that settles it, reviewers clear items faster without approving more errors.</p>
+    <h2>How I'd know</h2>
+    <p>Median review time per queue item as the primary metric, with corrections at sign-off and after release as the guardrail.</p>
+    <h2>Built on what exists</h2>
+    <p>The concept reuses traide's product list, the Product, Decision and Documentation stepper, and the decision basis panel with Alice's suggestion. The new idea is the grouping and the decision block, not a new app.</p>
+    <h2>Try it</h2>
+    <p>Open the harness and answer Alice's question. Send the bottle question to its owner. Make the call on the smartwatch. Then switch on design notes in the dark bar at the top.</p>
+    <div class="foot">
+      <p>Independent concept, not affiliated with traide AI. Products, codes, rulings and people are sample data. <a href="https://www.rakesh-patil.com" target="_blank" rel="noopener">rakesh-patil.com</a></p>
+      <button class="btn primary" data-act="close-brief">Open the review queue</button>
+    </div>
+  </div>
+</div>
+<div class="sheet" id="askSheet" role="dialog" aria-modal="true" aria-labelledby="askTitle"></div>
+<div class="pop" id="pop" role="dialog" aria-live="polite"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
