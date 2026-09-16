@@ -260,7 +260,7 @@ function tariffFact(it,st){
     '<div class="answers" role="group" aria-label="Your answer">'+
       '<button type="button" class="ans'+(ans==='yes'?' on':'')+'" data-answer="yes"'+dis+' role="radio" aria-checked="'+(ans==='yes')+'"><span class="ans-radio" aria-hidden="true"></span>'+esc(q.yes)+'</button>'+
       '<button type="button" class="ans'+(ans==='no'?' on':'')+'" data-answer="no"'+dis+' role="radio" aria-checked="'+(ans==='no')+'"><span class="ans-radio" aria-hidden="true"></span>'+esc(q.no)+'</button>'+
-      '<span data-host style="display:inline-flex"><button type="button" class="ans" data-act="ask"'+dis+'><span class="ans-radio" aria-hidden="true"></span>I don\u2019t know \u2014 ask the owner</button>'+pin(8,'inside')+'</span>'+
+      '<span data-host style="display:inline-flex"><button type="button" class="ans" data-act="ask"'+dis+'><span class="ans-radio" aria-hidden="true"></span>I don\u2019t know</button>'+pin(8,'inside')+'</span>'+
     '</div>'+
     (ans?'<p class="chosen">'+ic('checkc','sm')+'Your answer: <strong>'+esc(ans==='yes'?q.yes:q.no)+'</strong></p>':'')+
     (ans&&sc?'<p class="answered">'+(st.by==='you'?'Recorded as your answer.':'Answered by '+esc(q.owner.name)+'.')+' '+sc.code+' is now at '+sc.after+'%, above the release threshold.</p>':'')+
