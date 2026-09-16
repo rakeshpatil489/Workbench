@@ -271,7 +271,7 @@ function judgeClassificationsHTML(it,st){
   return '<div class="tclist">'+it.cands.map(function(c,i){
     var cls=sel===null?'':(sel===i?'win':'lose');
     var tag=i===0?'<span class="cand-tag alice">Alice’s suggestion</span>':'<span class="cand-tag">Alternative</span>';
-    return '<div class="trow '+cls+'">'+tag+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct">'+c.conf+'% confidence</span></div>';
+    return '<div class="trow '+cls+'">'+tag+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct">'+c.conf+'%</span></div>';
   }).join('')+'</div>';
 }
 function judgeEvidenceHTML(it,st){
