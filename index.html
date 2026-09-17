@@ -24,25 +24,31 @@
 <div class="modal" id="brief" role="dialog" aria-modal="true" aria-labelledby="briefTitle">
   <div class="brief">
     <p class="by">A product design concept by Rakesh Patil</p>
-    <h1 id="briefTitle">A review queue that says why Alice is unsure</h1>
-    <p class="lede">A confidence score says how unsure Alice is, but not why. This concept groups the review queue by the reason, and reduces each item to the one decision that settles it.</p>
+    <h1 id="briefTitle">A review queue that says why the AI is unsure</h1>
+    <p class="lede">A numerical confidence score tells an auditor how unsure an AI suggestion is, but not why. This concept structures the Review-Queue by the root cause of uncertainty, reducing each item to the single key decision that settles it.</p>
     <h2>The problem</h2>
-    <p>Suggestions under 90% confidence skip batch release and wait for a person. That queue is where expert hours concentrate, and where a rushed approval turns into an audit finding.</p>
+    <p>Based on metrics from traide's website, processing a batch of 100 articles takes roughly 6 hours, automatically clearing 75 items but routing 25 low-confidence articles directly to a manual review queue. Because a standard percentage score hides the underlying cause of error, human experts are forced to run an exhaustive, high-friction check on every single exception. This creates a severe operational bottleneck where cognitive fatigue quickly can turn into a non-compliance audit finding.</p>
     <h2>What I noticed</h2>
-    <p>Low confidence has different causes, and each needs a different action:</p>
+    <p>Low AI confidence has different causes, and each needs a completely different cognitive mindset from the reviewer:</p>
     <ul>
-      <li>A product fact is missing, so someone has to find it.</li>
-      <li>The tariff can be read two ways, so an expert has to decide.</li>
-      <li>Alice disagrees with the master data, so one of them is wrong.</li>
+      <li><strong>Missing information:</strong> A product fact is missing, so someone has to find it.</li>
+      <li><strong>Expert judgment:</strong> The tariff code text can be read two ways, so an expert has to decide.</li>
+      <li><strong>Master-data conflict:</strong> The AI suggestion conflicts with historical master data, so one of them is wrong.</li>
     </ul>
     <h2>Hypothesis</h2>
-    <p>If the queue is grouped by cause and each item shows only the decision that settles it, reviewers clear items faster without approving more errors.</p>
+    <p>If the Review-Queue is dynamically grouped by the cause of the uncertainty, and the interface isolates the viewport strictly to the single decision block that resolves it, then reviewers can batch-process identical mental models significantly faster—reducing the median manual review time per item without increasing error rates.</p>
     <h2>How I'd know</h2>
-    <p>Median review time per queue item as the primary metric, with corrections at sign-off and after release as the guardrail.</p>
+    <p>Median review time per queue item as the primary performance metric, with corrections at final sign-off and post-release accuracy checks acting as the baseline compliance guardrails.</p>
     <h2>Built on what exists</h2>
-    <p>The concept reuses traide's product list and the decision basis panel with Alice's suggestion. The new idea is the grouping and the decision block, not a new app.</p>
+    <p>The concept reuses traide's established product list structure and the core layout elements from the decision basis panel with the AI suggestion. The architectural innovation is entirely within the intelligent grouping engine and the isolated decision block, not an overhead-heavy new application.</p>
     <h2>Try it</h2>
-    <p>Open the bottle and answer Alice's question, or send it to its owner. Make the call on the smartwatch. Settle the conflict on the harness. Then switch on design notes in the dark bar at the top.</p>
+    <p>Explore all three possible root-cause scenarios by filtering or selecting items directly from the queue layout:</p>
+    <ul>
+      <li><strong>Missing Information:</strong> Open the Insulated Bottle and answer the single physical question holding up the machine's classification.</li>
+      <li><strong>Expert Judgment:</strong> Open the Smartwatch and make the definitive rule call to resolve the tariff ambiguity.</li>
+      <li><strong>Master-Data Conflict:</strong> Open the Control Cabinet Harness and settle the discrepancy between the automated suggestion and historical system precedents.</li>
+    </ul>
+    <p>Once inside an item, toggle on Design notes in the top bar to view my structural assumptions, hypothesis, and strategic rationale mapped directly inline with the user interface.</p>
     <div class="foot">
       <p>Independent concept, not affiliated with traide AI. Products, codes, rulings and people are sample data. <a href="https://www.rakesh-patil.com" target="_blank" rel="noopener">rakesh-patil.com</a></p>
       <button class="btn primary" data-act="close-brief">Open the review queue</button>
