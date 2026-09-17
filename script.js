@@ -122,18 +122,18 @@ var NOTES=[
     a:'I\u2019m assuming traide already has a list view and a decision-basis-with-Alice panel that this queue can slot into, based on what I could see from outside, not the live design system. If that\u2019s accurate, this ships as a thin layer over existing pieces instead of a new app to learn and maintain.'},
   {t:'Say why before asking what',b:'The banner tells the reviewer what kind of work this is before they read anything else: find a fact, make a call, or settle a conflict.',view:'detail',
     a:'This depends on the same cause label from note 1 being reliable enough to lead with, before the reviewer has read any product detail. If it is, naming the type of work up front saves the reviewer from diagnosing the cause themselves on every single item.'},
-  {t:'Show only where the codes disagree',b:'The path both codes share is settled, so it collapses into a quiet tree. The reviewer checks one fork, marked by the diamond, instead of re-deriving a whole classification.',view:'detail',
-    a:'I\u2019m assuming Alice\u2019s reasoning can be output as structured steps, not just a final code, so the shared part of the path can be told apart from the fork. I haven\u2019t seen that intermediate trace. If it exists, collapsing the agreed part lets the reviewer look at exactly the one thing that matters instead of re-deriving the whole classification.'},
-  {t:'Make the routing rule visible',b:'The 90% marker on every bar explains why the item is in the queue and what a confident suggestion looks like. When the rule is legible, trust can be calibrated instead of assumed.',view:'detail',
-    a:'I\u2019m assuming 90% is close to traide\u2019s real release threshold; I picked it as a plausible sample value, not a confirmed number. Whatever the real figure is, showing it on every bar turns the queue\u2019s reason for existing into something the reviewer can see, rather than a rule they take on faith.'},
-  {t:'Turn research into one question',b:'For data gaps, Alice names the single fact that decides the code and the clues she found. Answering updates the tree, the confidence and the tariff field at once, so the reviewer sees the consequence before approving.',view:'detail',g:'fact',
+  {t:'Show two codes, not the whole tariff path',b:'Every product still comes down to two competing codes. Instead of the section-and-chapter path both share, the list shows just the codes, a short description and Alice\u2019s confidence, so the reviewer compares the two directly instead of re-deriving a whole classification.',view:'detail',
+    a:'I\u2019m assuming Alice\u2019s model can reliably narrow every low-confidence item down to exactly two comparable candidates. I haven\u2019t seen that guarantee, and some real cases might have three or more contenders. Where it holds, showing just the two codes side by side lets the reviewer compare them directly instead of reading a full classification path.'},
+  {t:'Show confidence as a number, not a bar',b:'Each code shows Alice\u2019s confidence as a plain percentage, with no meter or threshold marker to interpret here. The 90% release rule that put the item in this queue is stated in the list view instead, so this view stays about comparing two numbers.',view:'detail',
+    a:'I\u2019m assuming 90% is close to traide\u2019s real release threshold; I picked it as a plausible sample value, not a confirmed number. Whatever the real figure is, stating it as a rule elsewhere and a plain number here keeps this view about comparing codes, not decoding a bar.'},
+  {t:'Turn research into one question',b:'For data gaps, Alice names the single fact that decides the code and the clues she found. Answering updates the classification list, the confidence and the tariff field at once, so the reviewer sees the consequence before approving.',view:'detail',g:'fact',
     a:'I\u2019m assuming Alice can isolate the one fact that would flip the decision and recompute a real confidence once it\u2019s supplied. I don\u2019t know if every gap reduces this cleanly, or if some need several facts at once. Where it does, turning research into one question replaces a lookup task with a single click.'},
   {t:'"Not sure" routes instead of guessing',b:'The person who knows the product is rarely on the customs team. One click sends a structured question they can answer from email without a login, and the item leaves the queue until it returns.',view:'detail',g:'fact',
     a:'I\u2019m assuming there\u2019s a reliable way to know who owns a given product fact, and that they can be reached and answer outside a traide login. I don\u2019t have visibility into traide\u2019s org data or whether this handoff exists today. If that mapping holds, it heads off the common failure of guessing rather than asking under time pressure.'},
   {t:'Every fact shows where it came from',b:'Facts from SAP, the PIM or a datasheet read as solid. Facts Alice read from an image stay visually weaker until a person confirms them, so the documentation shows which inputs a human vouched for.',view:'detail',
     a:'I\u2019m assuming the import pipeline tags each fact with its source system, and separately flags which facts Alice read from an image rather than one a system recorded directly. I haven\u2019t seen this provenance data; the sources here are invented for the sample. If sources really are tagged, this lets a reviewer trust facts differently instead of treating every field as equally solid.'},
-  {t:'No default on judgment calls',b:'When the law can be read two ways, Alice\u2019s lean is shown as an argument, not a preselected answer. That friction is deliberate: it counters automation bias on exactly the decisions the reviewer signs.',view:'detail',g:'judgment',
-    a:'I\u2019m assuming reviewers are prone to defaulting to whatever\u2019s preselected under time pressure, based on general findings on AI-assisted decisions, not data on this team\u2019s behavior. If that bias is real here, leaving the choice unmade forces an active decision on exactly the call the reviewer is signing their name to.'},
+  {t:'No default on judgment calls',b:'When the law can be read two ways, Alice\u2019s pick is labeled \u201cAlice\u2019s suggestion\u201d so its origin is clear, but neither option is preselected in the choice below. That friction is deliberate: it counters automation bias on exactly the decision the reviewer signs.',view:'detail',g:'judgment',
+    a:'I\u2019m assuming reviewers are prone to defaulting to whatever\u2019s labeled as the AI\u2019s pick under time pressure, based on general findings on AI-assisted decisions, not data on this team\u2019s behavior. If that bias is real here, labeling the origin without preselecting the choice forces an active decision on exactly the call the reviewer is signing their name to.'},
   {t:'Open the basis where the evidence is',b:'For conflicts, the decision basis opens on master data instead of Alice, and shows which past products are affected. The reviewer can flag them for re-review without changing anything live in SAP.',view:'detail',g:'conflict',
     a:'I\u2019m assuming a conflict can always be traced to specific, nameable past products in master data, not just a vague mismatch. I don\u2019t know if that lookup is reliably available at review time. If it is, opening straight to the disagreement lets the reviewer see the evidence immediately instead of hunting for it after reading Alice\u2019s case first.'},
   {t:'Documentation is written while you work',b:'The decision bar states what will be recorded before you approve. Approving moves the product to Documentation and hands over to a senior reviewer, which keeps the four-eyes principle intact.',view:'detail',
@@ -236,10 +236,10 @@ function shownConf(it,st,i){
 }
 function tclistHTML(it,st){
   var sel=st.override?-1:st.choice;
-  return '<div class="tclist">'+it.cands.map(function(c,i){
+  return '<div class="tclist" data-host>'+pin(5)+it.cands.map(function(c,i){
     var shown=shownConf(it,st,i),cls=sel===null?'':(sel===i?'win':'lose');
     var pct=shown!==c.conf?'<s>'+c.conf+'%</s>'+shown+'%':c.conf+'%';
-    return '<div class="trow '+cls+'">'+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct">'+pct+'</span></div>';
+    return '<div class="trow '+cls+'">'+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct" data-host>'+pct+(i===0?pin(6,'inside'):'')+'</span></div>';
   }).join('')+'</div>';
 }
 function evidenceHTML(it,st){
@@ -268,10 +268,10 @@ function tariffFact(it,st){
 }
 function judgeClassificationsHTML(it,st){
   var sel=st.override?-1:st.choice;
-  return '<div class="tclist">'+it.cands.map(function(c,i){
+  return '<div class="tclist" data-host>'+pin(5)+it.cands.map(function(c,i){
     var cls=sel===null?'':(sel===i?'win':'lose');
     var tag=i===0?'<span class="cand-tag alice">Alice’s suggestion</span>':'<span class="cand-tag">Alternative</span>';
-    return '<div class="trow '+cls+'">'+tag+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct">'+c.conf+'%</span></div>';
+    return '<div class="trow '+cls+'">'+tag+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct" data-host>'+c.conf+'%'+(i===0?pin(6,'inside'):'')+'</span></div>';
   }).join('')+'</div>';
 }
 function judgeEvidenceHTML(it,st){
