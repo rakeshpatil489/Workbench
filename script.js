@@ -201,7 +201,7 @@ function renderList(){
   var total=S.tab==='all'?ITEMS.length:groupCount(S.tab);
   var done=approvedCount(), m=median(S.durations);
   var hint=S.tab==='all'?'Every suggestion below Alice\u2019s 90% release threshold, tagged with why she is unsure.':GROUPS[S.tab].hint;
-  var h='<div class="topbar"><h1>'+ic('queue')+'Review queue</h1><span class="pill">Q4 launch project</span><button class="ghost" style="margin-left:auto" data-act="noop">'+ic('gauge')+'Review rules for this project</button></div>';
+  var h='<div class="topbar"><h1>'+ic('queue')+'Review queue</h1><button class="ghost" style="margin-left:auto" data-act="noop">'+ic('gauge')+'Review rules for this project</button></div>';
   h+='<div class="tabs" role="tablist"><span data-host style="display:flex;gap:4px;flex-wrap:wrap">'+tabs.map(function(t){
     return '<button class="tab t-'+t[0]+'" role="tab" data-ltab="'+t[0]+'" aria-selected="'+(S.tab===t[0])+'">'+(t[0]!=='all'?'<span class="dot"></span>':'')+t[1]+'<span class="n">'+t[2]+'</span></button>';
   }).join('')+pin(1)+'</span>'+
