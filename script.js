@@ -566,7 +566,7 @@ function quickQ(key,free){
   S.basis='alice';renderAll(true);
   var bs=document.querySelector('.bscroll');if(bs)bs.scrollTop=bs.scrollHeight;
 }
-function openBrief(){$('#brief').classList.add('show');$('#scrim').classList.add('show');setTimeout(function(){var b=document.querySelector('[data-act="close-brief"]');if(b)b.focus();},30);}
+function openBrief(){$('#brief').classList.add('show');$('#scrim').classList.add('show');$('#brief').scrollTop=0;setTimeout(function(){var b=document.querySelector('[data-act="close-brief"]');if(b)b.focus({preventScroll:true});},30);}
 function closeBrief(){$('#brief').classList.remove('show');if(!$('#askSheet').classList.contains('show'))$('#scrim').classList.remove('show');}
 
 /* design notes */
